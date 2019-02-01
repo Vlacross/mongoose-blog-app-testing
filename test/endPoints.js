@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 const expect = chai.expect;
 const mongoose = require('mongoose')
 const faker = require('faker');
+const db = mongoose.connection
 
 const { BlogPost } = require('../models')
 
@@ -15,10 +16,10 @@ function testHooks() {
         return runServer()
      });
      beforeEach(function() {
-         console.log('refurbished server')
+         buildCollection()
      });
      afterEach(function() {
-         console.log('refurbish server for next use')
+         dropCollection()
      });
      after(function() {
          return closeServer()
@@ -33,15 +34,18 @@ function testHooks() {
     -genereates fresh mock data and populates db
     -tests;
     -drop db(maybe collection?)
-
+console.log('refurbish server for next use')
 -purge db/collection
 -close db connection
 
  */
-
+function dropCollection() {
+    db.dropCollection('postsers')
+    console.log('dropping collection')
+}
  
 function buildCollection() {
-
+console.log('Building new Collection!')
     for(let i = 0; i < 10; i++) {
         console.log(i)
         let newPost = mockData()
@@ -49,7 +53,6 @@ function buildCollection() {
             return post
         })
     }
-    console.log(collection)
 }
 
 function mockData() {
@@ -67,9 +70,6 @@ function mockData() {
 describe('Get route', function() {
 
     testHooks();
-
-    buildCollection()
-
     it('should return a list of restaurants', function() {
          return chai.request(app)
           .get('/posts')
