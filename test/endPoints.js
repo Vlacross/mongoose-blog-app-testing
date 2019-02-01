@@ -6,6 +6,7 @@ const faker = require('faker');
 const db = mongoose.connection
 
 const { BlogPost } = require('../models')
+const { TEST_DATABASE_URL } = require('../config')
 
 chai.use(chaiHttp)
 
@@ -13,7 +14,7 @@ const { runServer, app, closeServer} = require('../server')
 
 function testHooks() {
     before(function() {
-        return runServer()
+        return runServer(TEST_DATABASE_URL)
      });
      beforeEach(function() {
          buildCollection()
@@ -87,23 +88,40 @@ function mockData() {
             })
         })
 
-        it('should return a single post when provided author id in params', function() {
+        it.only('should return a single post when provided author id in params', function() {
 
+            var databaseQuery = BlogPost.findOne();
+            var data;
             var postId
 
-            /*Get list to use one */
-            return chai.request(app)
-            .get('/posts')
-            .then(res => {
-                expect(res).to.have.status(200)
-                expect(res).to.be.an('object')
-                postId = res.body[0].id
+            return databaseQuery.then(function(_data) {
+                data = _data
+                console.log(data, 'data')
                 return chai.request(app)
-                    .get(`/posts/${postId}`)
-                    .then(res => {
-                        expect(res.body.id).to.equal(postId)
-                    })
+                .get(`/posts/${data.id}`)
+                .then(function(res) {
+                    console.log(data.id)
+                    expect(res).to.have.status(200)
+                    expect(res).to.be.an('object')
+                    expect(res.body.id).to.equal(data.id)
+                    
+                })
             })
+            
+
+            /*Get list to use one */
+                        // return chai.request(app)
+            // .get('/posts')
+            // .then(res => {
+            //     expect(res).to.have.status(200)
+            //     expect(res).to.be.an('object')
+            //     postId = res.body[0].id
+            //     return chai.request(app)
+            //         .get(`/posts/${postId}`)
+            //         .then(res => {
+            //             expect(res.body.id).to.equal(postId)
+            //         })
+            // })
 
         })
 
@@ -120,7 +138,7 @@ function mockData() {
             },
             title: faker.lorem.words(),
             content: faker.lorem.paragraph()
-        }
+        };
 
         const badPost = {
             author: {
@@ -128,7 +146,7 @@ function mockData() {
                 lastName: faker.name.lastName()
             },
             title: faker.lorem.words()
-        }
+        };
 
         it('should create a new post', function() {
             return chai.request(app)
@@ -144,6 +162,8 @@ function mockData() {
                 console.log()        
             })
         })
+   
+
 
         it('should fail if request is missing data', function() {
             return chai.request(app)
@@ -151,12 +171,55 @@ function mockData() {
             .send(badPost)
             .then(res => {
                 expect(res).to.have.status(400)
+                
+            })
+        })
+    })
+    
+    
+        describe('Update/PUT routes', function() {
+            testHooks();
+
+            // var updatePost = {
+            //     author: {
+            //         firstName: faker.name.firstName(),
+            //         lastName: faker.name.lastName()
+            //     },
+            //     title: faker.name.words(),
+            //     content: faker.name.paragraph()
+            // }
+
+            function updater(obj1, obj2) {
+                obj1.id = obj2.id
+                obj1.author = 'Author no found in db!'
+                obj1.title = 'Title has been removed!';
+                obj1.content = 'Content Removed!';
+                return obj1
+            }
+
+            var newPost = { }
+
+            it('should obtain the correct post based on id', function() {
+
+                return chai.request(app)
+                .get('/posts')
+                .then(res => {
+                    expect(res).to.have.status(200)
+                    // newPost = res.body[0]
+                    updater(newPost, res.body[0])
+                    // console.log(newPost)
+                    return chai.request(app)
+                    .put(`/posts/${newPost.id}`)
+                    .send(newPost)
+                    .then(res => {
+                        console.log(res.body)
+                    })
+                    
+                })
             })
         })
 
-        describe('Update/PUT routes', function() {
-            
-        })
 
 
-})
+
+
