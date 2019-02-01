@@ -99,7 +99,7 @@ app.put('/posts/:id', (req, res) => {
 
 app.delete('/:id', (req, res) => {
   BlogPost
-    .findByIdAndRemove(req.params.id)
+    .findOneAndDelete(req.params.id)
     .then(() => {
       console.log(`Deleted blog post with id \`${req.params.id}\``);
       res.status(204).end();

@@ -76,8 +76,38 @@ describe('Get route', function() {
           .then(function(res) {
             expect(res).to.have.status(200)
             expect(res.body).to.be.an('array')
+            expect(res).to.be.an('object')
+            res.body.forEach(post => {
+                expect(post).to.have.property('author').that.is.a('string')
+                expect(post).to.have.property('title').that.is.a('string')
+                expect(post).to.have.property('content').that.is.a('string')
+
+            })
             
           })
+    })
+
+    it('should return a single post when provided author id in params', function() {
+
+        var postId
+
+        /*Get list to use one */
+        return chai.request(app)
+        .get('/posts')
+        .then(res => {
+            expect(res).to.have.status(200)
+            expect(res).to.be.an('object')
+            postId = res.body[0].id
+            return chai.request(app)
+                .get(`/posts/${postId}`)
+                .then(res => {
+                    expect(res.body.id).to.equal(postId)
+                })
+        })
+
+        
+        
+
     })
 
 
