@@ -7,29 +7,30 @@ chai.use(chaiHttp)
 
 const { runServer, app, closeServer} = require('../server')
 
+describe('server', function() {
 
 
     before(function() {
-        return runServer()
+       return runServer()
     });
     beforeEach(function() {
-        console.log('starting another test')
+        console.log('refurbished server')
     });
     afterEach(function() {
-        console.log('finished test')
+        console.log('refurbish server for next use')
     });
     after(function() {
         return closeServer()
     });
 
-describe('GET route', function() {
+
     it('should return a list of restaurants', function() {
-         chai.request(app)
+         return chai.request(app)
           .get('/posts')
           .then(function(res) {
             expect(res).to.have.status(207)
           })
     })
+
+
 })
-
-
