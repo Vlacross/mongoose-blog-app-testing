@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const expect = require('chai').expect;
+const expect = chai.expect;
 const mongoose = require('mongoose')
 
 chai.use(chaiHttp)
@@ -10,7 +10,7 @@ const { runServer, app, closeServer} = require('../server')
 
 
     before(function() {
-        runServer
+        return runServer()
     });
     beforeEach(function() {
         console.log('starting another test')
@@ -19,13 +19,16 @@ const { runServer, app, closeServer} = require('../server')
         console.log('finished test')
     });
     after(function() {
-        closeServer
+        return closeServer()
     });
 
 describe('GET route', function() {
     it('should return a list of restaurants', function() {
-        return chai.request(app)
+         chai.request(app)
           .get('/posts')
+          .then(function(res) {
+            expect(res).to.have.status(207)
+          })
     })
 })
 

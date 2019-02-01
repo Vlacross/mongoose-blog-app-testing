@@ -1,4 +1,6 @@
 'use strict';
 
-exports.DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost/tempTestDb';
-exports.PORT = process.env.PORT || 8080;
+const DATABASE_URL = process.env.DATABASE_URL || 'mongodb://localhost/blogTest';
+const PORT = process.env.PORT || 8080;
+
+module.exports = { DATABASE_URL, PORT }

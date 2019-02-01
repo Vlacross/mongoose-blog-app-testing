@@ -14,6 +14,7 @@ app.use(morgan('common'));
 app.use(express.json());
 
 app.get('/posts', (req, res) => {
+  
   BlogPost
     .find()
     .then(posts => {
@@ -118,7 +119,8 @@ let server;
 // this function connects to our database, then starts the server
 function runServer(databaseUrl, port = PORT) {
   return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, err => {
+    console.log(DATABASE_URL)
+    mongoose.connect(databaseUrl, { useNewUrlParser: true }, err => {
       if (err) {
         return reject(err);
       }
@@ -128,6 +130,7 @@ function runServer(databaseUrl, port = PORT) {
       })
         .on('error', err => {
           mongoose.disconnect();
+          console.log(err)
           reject(err);
         });
     });
