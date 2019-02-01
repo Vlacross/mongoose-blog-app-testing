@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const { DATABASE_URL, PORT } = require('./config');
+const { DATABASE_URL, PORT, TEST_DATABASE_URL } = require('./config');
 const { BlogPost } = require('./models');
 
 const app = express();
@@ -120,7 +120,7 @@ let server;
 function runServer(databaseUrl, port = PORT) {
   
   return new Promise((resolve, reject) => {
-    let databaseUrl = DATABASE_URL; 
+    let databaseUrl = TEST_DATABASE_URL; 
     console.log(databaseUrl, PORT)
     mongoose.connect(databaseUrl, err => {
       if (err) {
@@ -158,7 +158,7 @@ function closeServer() {
 // if server.js is called directly (aka, with `node server.js`), this block
 // runs. but we also export the runServer command so other code (for instance, test code) can start the server as needed.
 if (require.main === module) {
-  runServer(DATABASE_URL).catch(err => console.error(err));
+  runServer(TEST_DATABASE_URL).catch(err => console.error(err));
 }
 
 module.exports = { runServer, app, closeServer };
