@@ -4,6 +4,8 @@ const expect = chai.expect;
 const mongoose = require('mongoose')
 const faker = require('faker');
 
+const { BlogPost } = require('../models')
+
 chai.use(chaiHttp)
 
 const { runServer, app, closeServer} = require('../server')
@@ -36,31 +38,37 @@ function testHooks() {
 -close db connection
 
  */
-function mockData() {
-    return `{
-        author: {
-            firstName: String,
-            lastName: String
-        },
-        title: 
-    }`
+
+ 
+function buildCollection() {
+
+    for(let i = 0; i < 10; i++) {
+        console.log(i)
+        let newPost = mockData()
+        newPost.then(function(post) {
+            return post
+        })
+    }
+    console.log(collection)
 }
 
-/*const blogPostSchema = mongoose.Schema({
-  author: {
-    firstName: String,
-    lastName: String
-  },
-  title: {type: String, required: true},
-  content: {type: String},
-  created: {type: Date, default: Date.now}
-}, {collection: 'posts'}); */
-
-
+function mockData() {
+    return BlogPost.create({
+        author: {
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName()
+        },
+        title: faker.lorem.words(),
+        content: faker.lorem.paragraph()
+    })
+    // .then(function(post) {console.log(post)})
+}
 
 describe('Get route', function() {
 
     testHooks();
+
+    buildCollection()
 
     it('should return a list of restaurants', function() {
          return chai.request(app)
@@ -68,7 +76,7 @@ describe('Get route', function() {
           .then(function(res) {
             expect(res).to.have.status(200)
             expect(res.body).to.be.an('array')
-            expect(res).to
+            
           })
     })
 
