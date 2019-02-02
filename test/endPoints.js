@@ -177,7 +177,7 @@ testHooks();
 
 
 
-  it('should fail if request is missing data', function() {
+  it('INTEGRATION - should fail if request is missing data', function() {
       /*Integration Testing */
     return chai.request(app)
     .post('/posts')
@@ -202,8 +202,8 @@ describe('Update/PUT routes', function() {
   // }
 
   function updater(obj1, obj2) {
-    obj1.id = obj2.id
-    obj1.author = 'Author no found in db!'
+    obj1._id = obj2._id
+    obj1.author = 'Author not found in db!'
     obj1.title = 'Title has been removed!';
     obj1.content = 'Content Removed!';
     return obj1
@@ -211,26 +211,38 @@ describe('Update/PUT routes', function() {
 
   var newPost = { }
 
-  it.only('should obtain the correct post based on id', function() {
-
+  it('UNIT - should obtain the correct post based on id', function() {
+      /*Unit Testing */
     return BlogPost.findOne()
-    .then(post => {
-      console.log(post)
-      // return BlogPost.findByIdAndUpdate({_id: post.id})
+    .then(oldPost => {
+      updater(newPost, oldPost)
+      return BlogPost.findByIdAndUpdate({_id: oldPost._id}, newPost, {new: true})
+      .then(res => {
+        expect(res).to.be.an('object')
+        expect(res.id).to.equal(oldPost.id)
+        expect(res.author).to.not.equal(oldPost.author)
+        expect(res.title).to.not.equal(oldPost.title)
+        expect(res.content).to.not.equal(oldPost.content)
+      })
     })
+  })
+
+  it.only('Should obtain the correct post and return and updated version', function() {
+
+  
+      /*Integration Testing */
     return chai.request(app)
     .get('/posts')
     .then(res => {
-      expect(res).to.have.status(200)
-      // newPost = res.body[0]
+      
       updater(newPost, res.body[0])
-      // console.log(newPost)
-      return chai.request(app)
-      .put(`/posts/${newPost.id}`)
-      .send(newPost)
-      .then(res => {
-        console.log(res.body)
-      })
+      console.log(newPost)
+      // return chai.request(app)
+      // .put(`/posts/${newPost.id}`)
+      // .send(newPost)
+      // .then(res => {
+      //   console.log(res.body)
+      // })
     })
   })
 })
