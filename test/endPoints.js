@@ -202,13 +202,17 @@ describe('Update/PUT routes', function() {
   // }
 
   function updater(obj1, obj2) {
-    obj1._id = obj2._id
-    obj1.author = 'Author not found in db!'
+   
+    !obj2._id ? obj1.id = obj2.id : obj1._id = obj2._id;
+
+    
+    obj1.author = {firstName: 'No such firstName ', lastName: 'Nay such lastName!'}
     obj1.title = 'Title has been removed!';
     obj1.content = 'Content Removed!';
     return obj1
   }
 
+  
   var newPost = { }
 
   it('UNIT - should obtain the correct post based on id', function() {
@@ -227,26 +231,34 @@ describe('Update/PUT routes', function() {
     })
   })
 
-  it.only('Should obtain the correct post and return and updated version', function() {
+  it.only('INTEGRATION - Should obtain the correct post and return and updated version', function() {
 
   
       /*Integration Testing */
     return chai.request(app)
     .get('/posts')
     .then(res => {
-      
       updater(newPost, res.body[0])
-      console.log(newPost)
-      // return chai.request(app)
-      // .put(`/posts/${newPost.id}`)
-      // .send(newPost)
-      // .then(res => {
-      //   console.log(res.body)
-      // })
+      return chai.request(app)
+      .put(`/posts/${newPost.id}`)
+      .send(newPost)
+      .then(res => {
+        expect(res).to.have.status(204)
+          return chai.request(app)
+          .get(`/posts/${newPost.id}`)
+          .then(res =>{
+            expect(res).to.have.status(200)
+            expect(res.body.author).to.equal(`${newPost.author.firstName}` + ' ' + `${newPost.author.lastName}`)
+            expect(res.body.title).to.equal(newPost.title)
+            expect(res.body.content).to.equal(newPost.content)
+          })
+      })
     })
   })
 })
 
+/*Delete */
+describe('')
 
 
 
