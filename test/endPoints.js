@@ -192,30 +192,19 @@ testHooks();
 describe('Update/PUT routes', function() {
   testHooks();
 
-  // var updatePost = {
-  //     author: {
-  //         firstName: faker.name.firstName(),
-  //         lastName: faker.name.lastName()
-  //     },
-  //     title: faker.name.words(),
-  //     content: faker.name.paragraph()
-  // }
-
   function updater(obj1, obj2) {
    
     !obj2._id ? obj1.id = obj2.id : obj1._id = obj2._id;
 
-    
     obj1.author = {firstName: 'No such firstName ', lastName: 'Nay such lastName!'}
     obj1.title = 'Title has been removed!';
     obj1.content = 'Content Removed!';
     return obj1
   }
 
-  
   var newPost = { }
 
-  it('UNIT - should obtain the correct post based on id', function() {
+  it('UNIT - should obtain the correct post based on id and return updated version', function() {
       /*Unit Testing */
     return BlogPost.findOne()
     .then(oldPost => {
@@ -231,9 +220,7 @@ describe('Update/PUT routes', function() {
     })
   })
 
-  it.only('INTEGRATION - Should obtain the correct post and return and updated version', function() {
-
-  
+  it('INTEGRATION - Should obtain the correct post and return and updated version', function() {
       /*Integration Testing */
     return chai.request(app)
     .get('/posts')
@@ -258,7 +245,50 @@ describe('Update/PUT routes', function() {
 })
 
 /*Delete */
-describe('')
+describe('DELETE routes', function() {
+
+  testHooks();
+
+  it('UNIT - Should delete a document by id', function() {
+      /*Unit Testing */
+    return BlogPost.findOne()
+    .then(res => {
+      return BlogPost.findByIdAndDelete(res._id)
+      .then(res => {
+        return BlogPost.findOne({_id: res._id})
+        .then(res => {
+          expect(res).to.be.null
+        })
+      })
+    })
+  })
+
+  var id;
+
+  it.only('INTEGRATION - Should delete a document by id', function() {
+      /*Integration Testing */
+    return chai.request(app)
+    .get('/posts')
+    .then(res => {
+      id = res.body[0].id
+      console.log(id, 'firsts')
+      return chai.request(app)
+      .delete(`/posts/${id}`)
+      .then(res => {
+        console.log(id, 'secns')
+        return chai.request(app)
+        .get(`/posts/${id}`)
+        .then(res => {
+          expect(res).to.have.status(500)
+        })
+      })
+    })
+  })
+
+
+
+
+})
 
 
 
