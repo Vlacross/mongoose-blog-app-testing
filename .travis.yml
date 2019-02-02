@@ -1,4 +1,11 @@
 language: node_js
 node_js: node
-services: 
+services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: Ic0q/ukA5nOWGyN4pZbyRV0ubGxFllNTNJ2nFOXMiGOnAWncoCV6CSu6aXi4PnaVrwR9zOPJPQ0NaENlPUHWzPwMmXm7RIKradxVfZmeBEtZdsWKxeXy1JQvKxGdJPxxJI2rmLrVQA47ocMNTcjOtsiNNyXeUntY9y1P5/nwQR6qlsJYfbNW/F2G0EU5YUdrPvS6G4ntdEra4eaM+zUrXEG2GjqiyEI9hKVcsPDNLHbcHU2cbFGxeYbvviLqp338L8et+MeBXmkv/7vrvQXY6pdXYy41olaeZUWb0mJ9y/LivPdnmuR2skSnQIMORmbPyiPG6RjCeg2vWlveDQdEaTCkti0bkMomHXhTyAzfoopyi/itIQ6dSeqJ0dPR9TXlk3hzTqxNQZirFX72G9ZpLBjOdrFcTdLsR1H/Jww6wJY2ClccFRBue8KvBJxc6YclKxXB8Kl/JnHItBWw/NaFw/BqPbc+pwP1mfXqCIOckFU9beGSZ6ElIxP7ko9rmE7S/Q1P/UBuN2p61UV0QLOZHKzL8KtksZgX8SKiXJLH4H+l4USBs2f059NQ5rKtLBqbk9cyLwVKlFSVjduoaNvtAcbFsjFU84fUT6VMmJ6EY9sL/Fdx3ZPohtFGi1GrUJVbWlII2R5zb+SHFzYA77fHaI4RGYIYG95RG7efSU2QO64=
+  app: mongoose-blog-app-testing
+  on:
+    repo: Vlacross/mongoose-blog-app-testing
