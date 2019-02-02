@@ -265,30 +265,24 @@ describe('DELETE routes', function() {
 
   var id;
 
-  it.only('INTEGRATION - Should delete a document by id', function() {
+  it('INTEGRATION - Should delete a document by id', function() {
       /*Integration Testing */
     return chai.request(app)
     .get('/posts')
     .then(res => {
       id = res.body[0].id
-      console.log(id, 'firsts')
       return chai.request(app)
       .delete(`/posts/${id}`)
       .then(res => {
-        console.log(id, 'secns')
         return chai.request(app)
         .get(`/posts/${id}`)
         .then(res => {
           expect(res).to.have.status(500)
-        })
-      })
-    })
-  })
-
-
-
-
-})
+        });
+      });
+    });
+  });
+});
 
 
 
