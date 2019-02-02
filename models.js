@@ -11,7 +11,7 @@ const blogPostSchema = mongoose.Schema({
   title: {type: String, required: true},
   content: {type: String},
   created: {type: Date, default: Date.now}
-}, {collection: 'postsers'});
+}, {collection: 'posts'});
 
 
 blogPostSchema.virtual('authorName').get(function() {
